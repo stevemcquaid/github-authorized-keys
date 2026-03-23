@@ -1,0 +1,29 @@
+# github-authorized-keys configuration
+#
+# Copy this file to:
+#   ~/.config/github-authorized-keys/config.yaml
+#
+# Or set the GAK_GITHUB_USERNAME environment variable.
+
+# GitHub username(s) whose public keys to sync.
+# Single username:
+github_username: "your-github-username"
+
+# Multiple usernames (any of these formats work):
+# github_username:
+#   - user1
+#   - user2
+#
+# Or comma-separated via environment variable:
+#   GAK_GITHUB_USERNAME=user1,user2
+
+# How often to sync keys (Go duration string).
+# Examples: 30m, 1h, 6h, 24h
+sync_interval: "1h"
+
+# Optional: override the path to authorized_keys.
+# Defaults to ~/.ssh/authorized_keys
+# authorized_keys_path: ""
+
+# Log level: debug | info | warn | error
+log_level: "info"
