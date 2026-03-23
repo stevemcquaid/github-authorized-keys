@@ -1,0 +1,18 @@
+name: github-authorized-keys
+runtime: python
+description: Deploy github-authorized-keys to one or more remote hosts
+
+config:
+  host:
+    description: "IP or hostname of the target server"
+  ssh_user:
+    description: "SSH username"
+    default: ubuntu
+  ssh_port:
+    description: "SSH port"
+    default: 22
+  github_username:
+    description: "GitHub username(s) — comma-separate multiple users"
+  sync_interval:
+    description: "Sync interval as a Go duration (e.g. 1h, 30m)"
+    default: "1h"

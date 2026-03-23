@@ -1,0 +1,25 @@
+---
+# GitHub username(s) whose public SSH keys to sync.
+# Can be a string or a list.
+gak_github_username: ""
+
+# Sync interval as a Go duration string.
+gak_sync_interval: "1h"
+
+# Path to authorized_keys. Leave empty to use ~/.ssh/authorized_keys.
+gak_authorized_keys_path: ""
+
+# Log level: debug | info | warn | error
+gak_log_level: "info"
+
+# Version to install. "latest" resolves to the latest GitHub release.
+gak_version: "latest"
+
+# Directory to install the binary.
+gak_install_dir: "{{ ansible_env.HOME }}/.local/bin"
+
+# Directory for the systemd user service unit.
+gak_systemd_user_dir: "{{ ansible_env.HOME }}/.config/systemd/user"
+
+# Directory for the config file.
+gak_config_dir: "{{ ansible_env.HOME }}/.config/github-authorized-keys"

@@ -1,0 +1,5 @@
+host            = "192.168.1.100"
+ssh_user        = "ubuntu"
+github_username = "octocat"
+sync_interval   = "1h"
+# ssh_private_key = file("~/.ssh/id_ed25519")  # or use SSH agent

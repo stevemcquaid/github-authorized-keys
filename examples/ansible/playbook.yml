@@ -1,0 +1,16 @@
+---
+# Example playbook — install github-authorized-keys on one or more hosts.
+#
+# Usage:
+#   ansible-playbook -i inventory.yml playbook.yml
+#
+# Override username at the command line:
+#   ansible-playbook -i inventory.yml playbook.yml -e "gak_github_username=octocat"
+
+- name: Install github-authorized-keys
+  hosts: all
+  roles:
+    - role: github_authorized_keys
+      vars:
+        gak_github_username: "octocat"   # replace with your GitHub username
+        gak_sync_interval: "1h"

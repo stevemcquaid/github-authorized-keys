@@ -1,0 +1,11 @@
+---
+- name: Reload systemd user daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+
+- name: Restart github-authorized-keys
+  ansible.builtin.systemd:
+    name: github-authorized-keys
+    state: restarted
+    scope: user

@@ -1,0 +1,21 @@
+# github-authorized-keys configuration
+# Managed by Ansible — changes will be overwritten on next run.
+
+{% if gak_github_username is string %}
+github_username: "{{ gak_github_username }}"
+{% else %}
+github_username:
+{% for user in gak_github_username %}
+  - "{{ user }}"
+{% endfor %}
+{% endif %}
+
+sync_interval: "{{ gak_sync_interval }}"
+
+{% if gak_authorized_keys_path | length > 0 %}
+authorized_keys_path: "{{ gak_authorized_keys_path }}"
+{% else %}
+# authorized_keys_path: ""  # defaults to ~/.ssh/authorized_keys
+{% endif %}
+
+log_level: "{{ gak_log_level }}"

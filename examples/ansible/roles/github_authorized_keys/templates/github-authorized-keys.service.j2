@@ -1,0 +1,16 @@
+[Unit]
+Description=Sync GitHub SSH keys to authorized_keys
+Documentation=https://github.com/stevemcquaid/github-authorized-keys
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart={{ gak_install_dir }}/github-authorized-keys
+Restart=on-failure
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

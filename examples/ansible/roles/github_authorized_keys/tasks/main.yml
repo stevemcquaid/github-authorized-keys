@@ -1,0 +1,83 @@
+---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - gak_github_username | length > 0
+    fail_msg: "gak_github_username must be set"
+
+- name: Detect system architecture
+  ansible.builtin.set_fact:
+    gak_arch: >-
+      {{ 'arm64' if ansible_architecture in ['aarch64', 'arm64']
+         else 'amd64' }}
+    gak_os: >-
+      {{ 'darwin' if ansible_system == 'Darwin' else 'linux' }}
+
+- name: Resolve latest release version
+  when: gak_version == "latest"
+  block:
+    - name: Fetch latest release tag from GitHub API
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/stevemcquaid/github-authorized-keys/releases/latest"
+        return_content: true
+        headers:
+          Accept: "application/vnd.github+json"
+      register: gak_release_response
+
+    - name: Set resolved version
+      ansible.builtin.set_fact:
+        gak_resolved_version: "{{ gak_release_response.json.tag_name }}"
+
+- name: Use pinned version
+  when: gak_version != "latest"
+  ansible.builtin.set_fact:
+    gak_resolved_version: "{{ gak_version }}"
+
+- name: Create install directory
+  ansible.builtin.file:
+    path: "{{ gak_install_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Download and extract binary
+  ansible.builtin.unarchive:
+    src: "https://github.com/stevemcquaid/github-authorized-keys/releases/download/{{ gak_resolved_version }}/github-authorized-keys_{{ gak_os }}_{{ gak_arch }}.tar.gz"
+    dest: "{{ gak_install_dir }}"
+    remote_src: true
+    include:
+      - "github-authorized-keys"
+    mode: "0755"
+
+- name: Create config directory
+  ansible.builtin.file:
+    path: "{{ gak_config_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Write config file
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ gak_config_dir }}/config.yaml"
+    mode: "0600"
+  notify: Restart github-authorized-keys
+
+- name: Create systemd user service directory
+  ansible.builtin.file:
+    path: "{{ gak_systemd_user_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Write systemd user service unit
+  ansible.builtin.template:
+    src: github-authorized-keys.service.j2
+    dest: "{{ gak_systemd_user_dir }}/github-authorized-keys.service"
+    mode: "0644"
+  notify: Reload systemd user daemon
+
+- name: Enable and start github-authorized-keys service
+  ansible.builtin.systemd:
+    name: github-authorized-keys
+    state: started
+    enabled: true
+    scope: user
+    daemon_reload: true
