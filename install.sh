@@ -106,28 +106,29 @@ main() {
 
   # Create a starter config if one doesn't exist.
   if [[ ! -f "${CONFIG_FILE}" ]]; then
-    mkdir -p "${CONFIG_DIR}"
+    mkdir -p "${CONFIG_DIR}" || { warn "Could not create config directory ${CONFIG_DIR}"; }
 
     # Prompt for username only when stdin is a real terminal (not curl|bash pipe).
     GH_USER=""
     if [[ -t 0 ]]; then
-      read -rp "Enter your GitHub username (or comma-separated list): " GH_USER </dev/tty
+      read -rp "Enter your GitHub username (or comma-separated list): " GH_USER </dev/tty || true
     fi
 
-    cat > "${CONFIG_FILE}" <<EOF
-# github-authorized-keys configuration
-# Edit this file, then run: systemctl --user restart github-authorized-keys
-github_username: "${GH_USER:-YOUR_GITHUB_USERNAME}"
+    printf '%s\n' \
+      '# github-authorized-keys configuration' \
+      '# Edit this file, then run: systemctl --user restart github-authorized-keys' \
+      "github_username: \"${GH_USER:-YOUR_GITHUB_USERNAME}\"" \
+      '' \
+      '# How often to sync keys (Go duration: 1h, 30m, etc.)' \
+      'sync_interval: "1h"' \
+      '' \
+      '# Optional: override the authorized_keys path' \
+      '# authorized_keys_path: ""' \
+      '' \
+      '# Log level: debug | info | warn | error' \
+      'log_level: "info"' \
+      > "${CONFIG_FILE}" || { warn "Could not write config to ${CONFIG_FILE}"; }
 
-# How often to sync keys (Go duration: 1h, 30m, etc.)
-sync_interval: "1h"
-
-# Optional: override the authorized_keys path
-# authorized_keys_path: ""
-
-# Log level: debug | info | warn | error
-log_level: "info"
-EOF
     if [[ -z "${GH_USER}" ]]; then
       warn "Config written to ${CONFIG_FILE} — edit it to set your GitHub username before starting the service."
     else
