@@ -97,7 +97,7 @@ main() {
     curl -fsSL "${SERVICE_URL}" -o "${SYSTEMD_DIR}/${SERVICE_FILE}" || {
       warn "Could not download service file. You can install it manually from the repository."
     }
-    systemctl --user daemon-reload
+    systemctl --user daemon-reload 2>/dev/null || true
     info "systemd service installed to ${SYSTEMD_DIR}/${SERVICE_FILE}"
   else
     warn "systemctl not found — skipping systemd service installation."
@@ -107,10 +107,17 @@ main() {
   # Create a starter config if one doesn't exist.
   if [[ ! -f "${CONFIG_FILE}" ]]; then
     mkdir -p "${CONFIG_DIR}"
-    read -rp "Enter your GitHub username (or comma-separated list): " GH_USER
+
+    # Prompt for username only when stdin is a real terminal (not curl|bash pipe).
+    GH_USER=""
+    if [[ -t 0 ]]; then
+      read -rp "Enter your GitHub username (or comma-separated list): " GH_USER </dev/tty
+    fi
+
     cat > "${CONFIG_FILE}" <<EOF
 # github-authorized-keys configuration
-github_username: "${GH_USER}"
+# Edit this file, then run: systemctl --user restart github-authorized-keys
+github_username: "${GH_USER:-YOUR_GITHUB_USERNAME}"
 
 # How often to sync keys (Go duration: 1h, 30m, etc.)
 sync_interval: "1h"
@@ -121,16 +128,25 @@ sync_interval: "1h"
 # Log level: debug | info | warn | error
 log_level: "info"
 EOF
-    info "Config written to ${CONFIG_FILE}"
+    if [[ -z "${GH_USER}" ]]; then
+      warn "Config written to ${CONFIG_FILE} — edit it to set your GitHub username before starting the service."
+    else
+      info "Config written to ${CONFIG_FILE}"
+    fi
   else
     info "Config already exists at ${CONFIG_FILE} — skipping."
   fi
 
-  # Enable and start the service.
+  # Enable and start the service (only if config has a real username).
   if command -v systemctl >/dev/null 2>&1; then
-    systemctl --user enable --now "${SERVICE_FILE%.service}" 2>/dev/null && \
-      info "Service enabled and started." || \
-      warn "Could not start service automatically. Run: systemctl --user enable --now github-authorized-keys"
+    if grep -q "YOUR_GITHUB_USERNAME" "${CONFIG_FILE}" 2>/dev/null; then
+      warn "Edit ${CONFIG_FILE} and set github_username, then run:"
+      warn "  systemctl --user enable --now github-authorized-keys"
+    else
+      systemctl --user enable --now "${SERVICE_FILE%.service}" 2>/dev/null && \
+        info "Service enabled and started." || \
+        warn "Could not start service automatically. Run: systemctl --user enable --now github-authorized-keys"
+    fi
   fi
 
   info "Installation complete!"
