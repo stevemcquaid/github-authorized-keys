@@ -141,13 +141,27 @@ main() {
     warn "  export PATH=\"\${HOME}/.local/bin:\${PATH}\""
   fi
 
-  # Install systemd user service.
+  # Install systemd user service (content embedded — no network fetch needed).
   if command -v systemctl >/dev/null 2>&1; then
     mkdir -p "${SYSTEMD_DIR}"
-    SERVICE_URL="https://raw.githubusercontent.com/${REPO}/${LATEST_TAG}/systemd/${SERVICE_FILE}"
-    curl -fsSL "${SERVICE_URL}" -o "${SYSTEMD_DIR}/${SERVICE_FILE}" || {
-      warn "Could not download service file from ${SERVICE_URL}"
-    }
+    printf '%s\n' \
+      '[Unit]' \
+      'Description=Sync GitHub SSH keys to authorized_keys' \
+      'Documentation=https://github.com/stevemcquaid/github-authorized-keys' \
+      'After=network-online.target' \
+      'Wants=network-online.target' \
+      '' \
+      '[Service]' \
+      'Type=simple' \
+      "ExecStart=${INSTALL_DIR}/${BINARY}" \
+      'Restart=on-failure' \
+      'RestartSec=30' \
+      'StandardOutput=journal' \
+      'StandardError=journal' \
+      '' \
+      '[Install]' \
+      'WantedBy=default.target' \
+      > "${SYSTEMD_DIR}/${SERVICE_FILE}"
     systemctl --user daemon-reload 2>/dev/null || true
     info "systemd service installed to ${SYSTEMD_DIR}/${SERVICE_FILE}"
   else

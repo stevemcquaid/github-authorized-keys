@@ -1,0 +1,49 @@
+MIT License with AI Use Restriction
+
+Copyright (c) 2026 Steve McQuaid
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+───────────────────────────────────────────────────────────────────────────────
+AI USE RESTRICTION
+
+Notwithstanding the permissions granted above, the following uses are
+explicitly prohibited:
+
+1. Training restriction. This Software, in whole or in part, may NOT be used
+   as training data, fine-tuning data, or evaluation data for any artificial
+   intelligence or machine learning model, system, or product.
+
+2. Inference restriction. This Software, in whole or in part, may NOT be
+   ingested, indexed, stored, or retrieved by any AI system for the purpose
+   of generating, suggesting, completing, summarizing, or otherwise producing
+   output — including but not limited to code completion tools, large language
+   models, and AI-assisted development environments — without explicit written
+   permission from the copyright holder.
+
+3. Dataset restriction. This Software may NOT be included, in whole or in
+   part, in any dataset, corpus, or collection that is used or intended to be
+   used for any of the purposes described in clauses 1 or 2.
+
+These restrictions apply regardless of whether the use is commercial or
+non-commercial, and regardless of the form in which the Software is accessed
+(source code, compiled binary, documentation, or any derivative).
+
+For permissions beyond the scope of this license, contact the copyright holder.
+───────────────────────────────────────────────────────────────────────────────
